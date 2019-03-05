@@ -28,7 +28,7 @@ def load_inbox():
 
 	return driver
 
-def send_mail(driver, recipient_address, email_subject, path_to_file):
+def send_mail(driver, recipient_address, email_subject, path_to_attachment):
 
 	create_mail_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.T-I-KE.L3")
 	create_mail_button.click()
@@ -43,16 +43,15 @@ def send_mail(driver, recipient_address, email_subject, path_to_file):
 	emailbody_field.send_keys("Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
 	time.sleep(3)
 
-	# attachment_button = driver.find_element_by_css_selector(".a1.aaA.aMZ")
-	# attachment_button.click()
-	# time.sleep(5)
-	# attachment_button.send_keys(path_to_file)
+	file_entry = driver.find_element_by_name("Filedata")
+	file_entry.send_keys(path_to_attachment)
 
 	send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
 	send_button.click()
 
 driver = load_inbox()
 
-send_mail(driver, "matthew.caminiti@mail.mcgill.ca", "First Test", (os.getcwd() + '/chicken.jpg'))
+send_mail(driver, "matthew.caminiti@mail.mcgill.ca", "First Test", (os.getcwd() + '/images/chicken.jpg'))
 
+driver.quit()
 
