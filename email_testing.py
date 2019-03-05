@@ -15,7 +15,7 @@ def load_inbox():
 
 	next_button = driver.find_element_by_css_selector(".RveJvd.snByac")
 	next_button.click()
-	time.sleep(2)
+	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	password_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf")
 	password_element.send_keys("ter12wvrrahah")
@@ -24,12 +24,13 @@ def load_inbox():
 	next_button = driver.find_element_by_css_selector(".RveJvd.snByac")
 	next_button.click()
 
-	time.sleep(5) # wait to load next
+	time.sleep(5) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	return driver
 
-def send_mail(driver, recipient_address, email_subject, path_to_attachment):
-
+def send_mail(recipient_address, email_subject, path_to_attachment):
+	driver = load_inbox()
+	
 	create_mail_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.T-I-KE.L3")
 	create_mail_button.click()
 
@@ -41,17 +42,31 @@ def send_mail(driver, recipient_address, email_subject, path_to_attachment):
 
 	emailbody_field = driver.find_element_by_css_selector(".Am.Al.editable.LW-avf")
 	emailbody_field.send_keys("Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
-	time.sleep(3)
+	time.sleep(3) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	file_entry = driver.find_element_by_name("Filedata")
 	file_entry.send_keys(path_to_attachment)
+	time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
 	send_button.click()
+	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
-driver = load_inbox()
+	email = {}
+	email["recipient_address"] = recipient_address
+	email["email_subject"] = email_subject
+	email["attachment_name"] = path_to_attachment.split("/")[len(path_to_attachment.split("/")) - 1]
 
-send_mail(driver, "matthew.caminiti@mail.mcgill.ca", "First Test", (os.getcwd() + '/images/chicken.jpg'))
+	driver.quit()
+	return email
 
-driver.quit()
+
+def receive_mail():
+	driver = load_inbox()
+
+	driver.quit()
+	return True
+
+email = send_mail("dogwizard69@gmail.com", "First Test", (os.getcwd() + '/images/chicken.jpg'))
+
 
