@@ -5,7 +5,6 @@ import os
 import random
 
 def load_inbox():
-
 	driver = webdriver.Chrome(ChromeDriverManager().install())
 	driver.get('https://gmail.com')
 	
@@ -53,6 +52,7 @@ def send_mail(recipient_address, email_subject, path_to_attachment):
 	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	email = {}
+	email["delivery_address"] = "dogwizard69@gmail.com"
 	email["recipient_address"] = recipient_address
 	email["email_subject"] = email_subject
 	email["attachment_name"] = path_to_attachment.split("/")[len(path_to_attachment.split("/")) - 1]
@@ -60,13 +60,45 @@ def send_mail(recipient_address, email_subject, path_to_attachment):
 	driver.quit()
 	return email
 
+# email : dictionary containing delivery_address, recipient_address, email_subject, attachment_name
+# returns boolean of whether or not email is in the inbox
+def receive_mail(receiver_address, email):
+	driver = load_inbox() # currently using same email account to test
 
-def receive_mail():
-	driver = load_inbox()
+	try:
+		received_email = driver.find_element_by_css_selector(".afn")
+		subject = driver.find_element_by_css_selector(".bqe")
+		email_info = received_email.text
+		print(subject)
 
+		# OLD code block trying to get text of WebElement ---------
+		# email_info = driver.execute_script('''
+		# var parent = arguments[0];
+		# var child = parent.firstChild;
+		# var ret = "";
+		# while(child) {
+		# 	if(child.nodeType === Node.TEXT_NODE)
+		# 		ret += child.textContent;
+		# 	child = child.nextSibling;
+		# }
+		# return ret;
+		# ''', received_email).split(',')
+		# END OLD -----------------
+
+		print("Email info %s" % email_info)
+		if(email_info[2] == email["email_subject"]):
+			return True
+	except Exception as e:
+		print("Bricked trying to find received email: [%s]" % e)
+		return False
+
+	print("No match on email subject")
 	driver.quit()
-	return True
+	return False
 
 email = send_mail("dogwizard69@gmail.com", "First Test", (os.getcwd() + '/images/chicken.jpg'))
 
+success = receive_mail("dogwizard69@gmail.com", email)
+
+print("Received Email Check: %s\a" % success)
 
