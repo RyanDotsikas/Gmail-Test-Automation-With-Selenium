@@ -66,38 +66,37 @@ def receive_mail(receiver_address, email):
 	driver = load_inbox() # currently using same email account to test
 
 	try:
-		received_email = driver.find_element_by_css_selector(".afn")
-		subject = driver.find_element_by_css_selector(".bqe")
-		email_info = received_email.text
-		print(subject)
+		sender = driver.find_element_by_css_selector(".zF").get_attribute("email")
+		body = driver.find_element_by_css_selector(".y2").text
 
-		# OLD code block trying to get text of WebElement ---------
-		# email_info = driver.execute_script('''
-		# var parent = arguments[0];
-		# var child = parent.firstChild;
-		# var ret = "";
-		# while(child) {
-		# 	if(child.nodeType === Node.TEXT_NODE)
-		# 		ret += child.textContent;
-		# 	child = child.nextSibling;
-		# }
-		# return ret;
-		# ''', received_email).split(',')
-		# END OLD --------
+		subjects = driver.find_elements_by_css_selector(".bqe")
+		subject = subjects[1].text
 
-		print("Email info %s" % email_info)
-		if(email_info[2] == email["email_subject"]):
+		email_button = driver.find_element_by_css_selector(".zA.zE.byw")
+		email_button.click()
+		time.sleep(1) # NEED TO FIO WAIT FOR LOAD
+
+		attachment_name = driver.find_element_by_css_selector(".f.gW").get_attribute("title")
+
+		body = driver.find_element_by_css_selector(".a3s.aXjCH").text
+
+		# print("Email sender [%s]" % sender)
+		# print("Email subject [%s]" % subject)
+		# print("Email body [%s]" % body)
+		# print("Email attachment name [%s]" % attachment_name)
+
+		if(subject == email["email_subject"] and attachment_name == email["attachment_name"]):
 			return True
 	except Exception as e:
 		print("Bricked trying to find received email: [%s]" % e)
 		return False
 
-	print("No match on email subject")
+	print("No match on email content")
 	driver.quit()
 	return False
 
-email = send_mail("dogwizard69@gmail.com", "First Test", (os.getcwd() + '/images/chicken.jpg'))
-
+email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
+# email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
 success = receive_mail("dogwizard69@gmail.com", email)
 
 print("Received Email Check: %s\a" % success)
