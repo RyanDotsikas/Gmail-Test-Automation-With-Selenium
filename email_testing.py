@@ -83,7 +83,7 @@ def receive_mail(receiver_address, email):
 		# }
 		# return ret;
 		# ''', received_email).split(',')
-		# END OLD -----------------
+		# END OLD --------
 
 		print("Email info %s" % email_info)
 		if(email_info[2] == email["email_subject"]):
