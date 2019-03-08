@@ -22,6 +22,7 @@ def load_inbox():
 	password_element.send_keys("ter12wvrrahah")
 
 	wait = WebDriverWait(driver, 10) # will repeatedly search for element until it is clickable, max search time is 10 sec
+	next_button = wait.until(ec.visibility_of_element_located((By.XPATH, "//div[@id='passwordNext']/content/span")))
 	next_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//div[@id='passwordNext']/content/span")))
 	next_button.click()
 
