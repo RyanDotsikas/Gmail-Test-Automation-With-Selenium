@@ -17,11 +17,13 @@ def step_impl(context):
 @when('I enter a valid email address for the recipient')
 def step_impl(context):
     context.recipient = "dogwizard69@gmail.com"
+    context.recipient_password = "ter12wvrrahah"
     fill_to_field(context.driver, context.recipient)
 
 @when('I enter a subject line or a body to the email')
 def step_impl(context):
-    fill_subject_field(context.driver, "Test Subject")
+    context.subject = "Test Subject"
+    fill_subject_field(context.driver, context.subject)
     fill_body_field(context.driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
 
 @when('I attach an image that is less than 25 Mb in size')
@@ -57,7 +59,8 @@ def step_impl(context):
 # ------------ THEN ---------------
 @then('the recipient receives the email with the image attached')
 def step_impl(context):
-    assert context.failed is False
+    email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : "chicken.jpg"}
+    receive_mail(context.recipient, context.recipient_password, email, False)
 
 @then('the recipient receives the email with the image linked via Google Drive')
 def step_impl(context):
