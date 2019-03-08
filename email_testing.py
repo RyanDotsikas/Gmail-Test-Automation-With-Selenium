@@ -7,26 +7,34 @@ import time
 import os
 import random
 
-def load_inbox():
+def setup_webdriver():
 	driver = webdriver.Chrome(ChromeDriverManager().install())
 	driver.implicitly_wait(10)
+
+	return driver
+
+#"dogwizard69"
+#"ter12wvrrahah"
+def load_inbox(driver, username, password):
+	#driver = webdriver.Chrome(ChromeDriverManager().install())
+	#driver.implicitly_wait(10)
 	driver.get('https://gmail.com')
 	
 	email_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf[autocomplete='username']")
-	email_element.send_keys("dogwizard69")
+	email_element.send_keys(username)
 
 	next_button = driver.find_element_by_css_selector(".RveJvd.snByac")
 	next_button.click()
 
 	password_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf[autocomplete='current-password']")
-	password_element.send_keys("ter12wvrrahah")
+	password_element.send_keys(password)
 
 	wait = WebDriverWait(driver, 10) # will repeatedly search for element until it is clickable, max search time is 10 sec
 	next_button = wait.until(ec.visibility_of_element_located((By.XPATH, "//div[@id='passwordNext']/content/span")))
 	next_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//div[@id='passwordNext']/content/span")))
 	next_button.click()
 
-	return driver
+	#return driver
 
 def click_create_mail(driver):
 	try:
@@ -88,7 +96,8 @@ def check_sent_popup(driver):
 
 
 def send_mail(recipient_address, email_subject, path_to_attachment):
-	driver = load_inbox()
+	driver = setup_webdriver()
+	load_inbox(driver, "dogwizard69", "ter12wvrrahah")
 
 	click_create_mail(driver)
 
@@ -116,7 +125,8 @@ def send_mail(recipient_address, email_subject, path_to_attachment):
 	return email
 
 def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachments):
-	driver = load_inbox()
+	driver = setup_webdriver()
+	load_inbox(driver, "dogwizard69", "ter12wvrrahah")
 
 	click_create_mail(driver)
 
@@ -151,7 +161,8 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 # email : dictionary containing delivery_address, recipient_address, email_subject, attachment_name
 # returns boolean of whether or not email is in the inbox
 def receive_mail(receiver_address, email, multi_attach = False):
-	driver = load_inbox() # currently using same email account to test
+	driver = setup_webdriver()
+	load_inbox(driver, "dogwizard69", "ter12wvrrahah") # currently using same email account to test
 
 	try:
 		sender = driver.find_element_by_css_selector(".zF").get_attribute("email")

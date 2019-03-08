@@ -1,46 +1,55 @@
 from behave import *
+import os
 
 # ------------ GIVEN ---------------
 @given('I am logged into a valid Gmail account')
 def step_impl(context):
-    pass
+    context.driver = setup_webdriver()
+    load_inbox(context.driver, "dogwizard69", "ter12wvrrahah")
 # ----------------------------------
 
 # ------------ WHEN ---------------
 @when('I choose to compose a new email')
 def step_impl(context):
-    assert True is not False
+    click_create_mail(context.driver)
 
 @when('I enter a valid email address for the recipient')
 def step_impl(context):
-    assert True is not False
+    context.recipient = "dogwizard69@gmail.com"
+    fill_to_field(context.driver, context.recipient)
 
 @when('I enter a subject line or a body to the email')
 def step_impl(context):
-    assert True is not False
+    fill_subject_field(context.driver, "Test Subject")
+    fill_body_field(context.driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
 
 @when('I attach an image that is less than 25 Mb in size')
 def step_impl(context):
-    assert True is not False
+    attach_file(context.driver, (os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/chicken.jpg'))
 
 @when('I send the email')
 def step_impl(context):
-	assert True is not False
+	press_send(context.driver)
 
 @when('I select an image that exceeds 25 Mb in size to attach')
 def step_impl(context):
-    assert True is not False
+    # Need to attach a file that is actually more than 25 Mb
+    attach_file(context.driver, (os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/chicken.jpg'))
 
 @when('I attach multiple images (that total less than 25 Mb)')
 def step_impl(context):
-    assert True is not False
+    paths_to_attachments = [(os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/chicken.jpg'), (os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/tomato.jpeg')]
+    for path in paths_to_attachments:
+        attach_file(context.driver, path)
 
 @when('I enter an invalid email address for the recipient')
 def step_impl(context):
-    assert True is not False
+    context.recipient = "sdfjsidnfo129sdf7@gmail.com"
+    fill_to_field(context.driver, context.recipient)
 
 @when('I do not enter a subject line or a body to the email')
 def step_impl(context):
+    #Don't have to do anything here?
     assert True is not False
 # ----------------------------------
 
