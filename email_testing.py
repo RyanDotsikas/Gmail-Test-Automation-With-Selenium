@@ -80,13 +80,13 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 	email["delivery_address"] = "dogwizard69@gmail.com"
 	email["recipient_address"] = recipient_address
 	email["email_subject"] = email_subject
-	email["attachment_name"] = []
+	email["attachment_names"] = []
 
 	for path in paths_to_attachments:
 		file_entry = driver.find_element_by_name("Filedata")
 		file_entry.send_keys(path)
 		time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
-		email["attachment_name"].append(path.split("/")[len(path.split("/")) - 1])
+		email["attachment_names"].append(path.split("/")[len(path.split("/")) - 1])
 
 	send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
 	send_button.click()
@@ -111,20 +111,30 @@ def receive_mail(receiver_address, email, multi_attach = False):
 		email_button.click()
 		time.sleep(1) # NEED TO FIO WAIT FOR LOAD
 
+		body = driver.find_element_by_css_selector(".a3s.aXjCH").text
+
+		attachment_name = ""
+		attachment_names = []
 		if(multi_attach):
-			# TODO: HANDLE CHECKING MULTIPLE ATTACH NAMES
+			attachment_names = [f.get_attribute("title") for f in driver.find_elements_by_css_selector(".f.gW")]
+			print(attachment_names)
+			sorted_known_attach_names = email["attachment_names"].sort()
+			sorted_found_attach_names = attachment_names.sort()
+			if(sorted_known_attach_names != sorted_found_attach_names):
+				print("Attachment names not the same")
+				return False
+			if(subject == email["email_subject"]):
+				return True
 		else:
 			attachment_name = driver.find_element_by_css_selector(".f.gW").get_attribute("title")
-
-		body = driver.find_element_by_css_selector(".a3s.aXjCH").text
 
 		# print("Email sender [%s]" % sender)
 		# print("Email subject [%s]" % subject)
 		# print("Email body [%s]" % body)
 		# print("Email attachment name [%s]" % attachment_name)
 
-		if(subject == email["email_subject"] and attachment_name == email["attachment_name"]):
-			return True
+		# if(subject == email["email_subject"] and attachment_name == email["attachment_name"]):
+		# 	return True
 	except Exception as e:
 		print("Bricked trying to find received email: [%s]" % e)
 		return False
@@ -133,9 +143,9 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
-email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
+email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')])
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
-success = receive_mail("dogwizard69@gmail.com", email)
+success = receive_mail("dogwizard69@gmail.com", email, True)
 
 print("Received Email Check: %s\a" % success)
 
