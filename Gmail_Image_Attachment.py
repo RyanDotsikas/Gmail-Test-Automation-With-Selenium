@@ -1,4 +1,5 @@
 from behave import *
+import email_testing.py
 import os
 
 # ------------ GIVEN ---------------
@@ -25,7 +26,7 @@ def step_impl(context):
 
 @when('I attach an image that is less than 25 Mb in size')
 def step_impl(context):
-    attach_file(context.driver, (os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/chicken.jpg'))
+    attach_file(context.driver, (os.getcwd() + '/images/chicken.jpg'))
 
 @when('I send the email')
 def step_impl(context):
@@ -34,11 +35,11 @@ def step_impl(context):
 @when('I select an image that exceeds 25 Mb in size to attach')
 def step_impl(context):
     # Need to attach a file that is actually more than 25 Mb
-    attach_file(context.driver, (os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/chicken.jpg'))
+    attach_file(context.driver, (os.getcwd() + '/images/chicken.jpg'))
 
 @when('I attach multiple images (that total less than 25 Mb)')
 def step_impl(context):
-    paths_to_attachments = [(os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/chicken.jpg'), (os.path.dirname(os.path.dirname(os.path.dirname(Gmail_Image_Attachment.py))) + '/images/tomato.jpeg')]
+    paths_to_attachments = [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')]
     for path in paths_to_attachments:
         attach_file(context.driver, path)
 
