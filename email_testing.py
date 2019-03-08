@@ -1,4 +1,7 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 import os
@@ -6,24 +9,21 @@ import random
 
 def load_inbox():
 	driver = webdriver.Chrome(ChromeDriverManager().install())
+	driver.implicitly_wait(10)
 	driver.get('https://gmail.com')
 	
-	
-	email_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf")
+	email_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf[autocomplete='username']")
 	email_element.send_keys("dogwizard69")
 
 	next_button = driver.find_element_by_css_selector(".RveJvd.snByac")
 	next_button.click()
-	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
-	password_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf")
+	password_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf[autocomplete='current-password']")
 	password_element.send_keys("ter12wvrrahah")
 
-
-	next_button = driver.find_element_by_css_selector(".RveJvd.snByac")
+	wait = WebDriverWait(driver, 10) # will repeatedly search for element until it is clickable, max search time is 10 sec
+	next_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//div[@id='passwordNext']/content/span")))
 	next_button.click()
-
-	time.sleep(5) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	return driver
 
@@ -71,9 +71,20 @@ def press_send(driver):
 	try:
 		send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
 		send_button.click()
-		# TODO : CHECK FOR SEND CONFIRMATION
 	except Exception as e:
 		return False
+
+def check_sent_popup(driver):
+	try:
+		popup = driver.find_element_by_css_selector(".bAq").text
+		if(popup == "Message sent."):
+			return True
+		else:
+			return False
+	except Exception as e:
+		# print("Bricked getting popup text [%s]" % e)
+		return False
+
 
 def send_mail(recipient_address, email_subject, path_to_attachment):
 	driver = load_inbox()
@@ -85,13 +96,14 @@ def send_mail(recipient_address, email_subject, path_to_attachment):
 	fill_subject_field(driver, email_subject)
 
 	fill_body_field(driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
-	time.sleep(3) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	attach_file(driver, path_to_attachment)
-	time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	press_send(driver)
-	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
+
+	while(True):
+		if(check_sent_popup(driver)):
+			break
 
 	email = {}
 	email["delivery_address"] = "dogwizard69@gmail.com"
@@ -112,7 +124,7 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 	fill_subject_field(driver, email_subject)
 
 	fill_body_field(driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
-	time.sleep(3) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
+	# time.sleep(3) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	email = {}
 	email["delivery_address"] = "dogwizard69@gmail.com"
@@ -122,11 +134,11 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 
 	for path in paths_to_attachments:
 		attach_file(driver, path)
-		time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
+		# time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 		email["attachment_names"].append(path.split("/")[len(path.split("/")) - 1])
 
 	press_send(driver)
-	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
+	# time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	driver.quit()
 	return email
@@ -145,8 +157,9 @@ def receive_mail(receiver_address, email, multi_attach = False):
 
 		email_button = driver.find_element_by_css_selector(".zA.zE.byw")
 		email_button.click()
-		time.sleep(1) # NEED TO FIO WAIT FOR LOAD
+		# time.sleep(1) # NEED TO FIO WAIT FOR LOAD
 
+		# TODO : CLEAN UP EMAIL CHECKING TIMING!
 		body = driver.find_element_by_css_selector(".a3s.aXjCH").text
 
 		attachment_name = ""
@@ -172,10 +185,10 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
-# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
-email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')])
+email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
+# email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')])
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
-success = receive_mail("dogwizard69@gmail.com", email, True)
+success = receive_mail("dogwizard69@gmail.com", email, False)
 
 print("Received Email Check: %s\a" % success)
 
