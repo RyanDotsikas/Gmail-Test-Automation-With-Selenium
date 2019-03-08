@@ -141,6 +141,10 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 	press_send(driver)
 	# time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
+	while(True):
+		if(check_sent_popup(driver)):
+			break
+
 	driver.quit()
 	return email
 
@@ -186,10 +190,10 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
-email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
-# email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')])
+# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
+email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')])
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
-success = receive_mail("dogwizard69@gmail.com", email, False)
+success = receive_mail("dogwizard69@gmail.com", email, True)
 
 print("Received Email Check: %s\a" % success)
 
