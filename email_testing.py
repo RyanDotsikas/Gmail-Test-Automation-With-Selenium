@@ -27,28 +27,70 @@ def load_inbox():
 
 	return driver
 
+def click_create_mail(driver):
+	try:
+		create_mail_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.T-I-KE.L3")
+		create_mail_button.click()
+		return True
+	except Exception as e:
+		return False
+	
+def fill_to_field(driver, recipient_address):
+	try:
+		to_field = driver.find_element_by_css_selector(".vO")
+		to_field.send_keys(recipient_address)
+		return True
+	except Exception as e:
+		return False
+	
+def fill_subject_field(driver, subject):
+	try:
+		subject_field = driver.find_element_by_css_selector(".aoT")
+		subject_field.send_keys(subject)
+		return True
+	except Exception as e:
+		return False
+
+def fill_body_field(driver, body):
+	try:
+		emailbody_field = driver.find_element_by_css_selector(".Am.Al.editable.LW-avf")
+		emailbody_field.send_keys(body + " " + str(random.randint(1,10000)))
+		return True
+	except Exception as e:
+		return False
+
+def attach_file(driver, path):
+	try:
+		file_entry = driver.find_element_by_name("Filedata")
+		file_entry.send_keys(path)
+		return True
+	except Exception as e:
+		return False
+
+def press_send(driver):
+	try:
+		send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
+		send_button.click()
+		# TODO : CHECK FOR SEND CONFIRMATION
+	except Exception as e:
+		return False
+
 def send_mail(recipient_address, email_subject, path_to_attachment):
 	driver = load_inbox()
-	
-	create_mail_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.T-I-KE.L3")
-	create_mail_button.click()
 
-	to_field = driver.find_element_by_css_selector(".vO")
-	to_field.send_keys(recipient_address)
+	click_create_mail(driver)
 
-	subject_field = driver.find_element_by_css_selector(".aoT")
-	subject_field.send_keys(email_subject)
+	fill_to_field(driver, recipient_address)
 
-	emailbody_field = driver.find_element_by_css_selector(".Am.Al.editable.LW-avf")
-	emailbody_field.send_keys("Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
+	fill_subject_field(driver, email_subject)
+
+	fill_body_field(driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
 	time.sleep(3) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
-	file_entry = driver.find_element_by_name("Filedata")
-	file_entry.send_keys(path_to_attachment)
+	attach_file(driver, path_to_attachment)
 	time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
-	send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
-	send_button.click()
+	press_send(driver)
 	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	email = {}
@@ -63,17 +105,13 @@ def send_mail(recipient_address, email_subject, path_to_attachment):
 def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachments):
 	driver = load_inbox()
 
-	create_mail_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.T-I-KE.L3")
-	create_mail_button.click()
+	click_create_mail(driver)
 
-	to_field = driver.find_element_by_css_selector(".vO")
-	to_field.send_keys(recipient_address)
+	fill_to_field(driver, recipient_address)
 
-	subject_field = driver.find_element_by_css_selector(".aoT")
-	subject_field.send_keys(email_subject)
+	fill_subject_field(driver, email_subject)
 
-	emailbody_field = driver.find_element_by_css_selector(".Am.Al.editable.LW-avf")
-	emailbody_field.send_keys("Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
+	fill_body_field(driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
 	time.sleep(3) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	email = {}
@@ -83,13 +121,11 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 	email["attachment_names"] = []
 
 	for path in paths_to_attachments:
-		file_entry = driver.find_element_by_name("Filedata")
-		file_entry.send_keys(path)
+		attach_file(driver, path)
 		time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 		email["attachment_names"].append(path.split("/")[len(path.split("/")) - 1])
 
-	send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
-	send_button.click()
+	press_send(driver)
 	time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	driver.quit()
@@ -117,7 +153,6 @@ def receive_mail(receiver_address, email, multi_attach = False):
 		attachment_names = []
 		if(multi_attach):
 			attachment_names = [f.get_attribute("title") for f in driver.find_elements_by_css_selector(".f.gW")]
-			print(attachment_names)
 			sorted_known_attach_names = email["attachment_names"].sort()
 			sorted_found_attach_names = attachment_names.sort()
 			if(sorted_known_attach_names != sorted_found_attach_names):
@@ -127,14 +162,8 @@ def receive_mail(receiver_address, email, multi_attach = False):
 				return True
 		else:
 			attachment_name = driver.find_element_by_css_selector(".f.gW").get_attribute("title")
-
-		# print("Email sender [%s]" % sender)
-		# print("Email subject [%s]" % subject)
-		# print("Email body [%s]" % body)
-		# print("Email attachment name [%s]" % attachment_name)
-
-		# if(subject == email["email_subject"] and attachment_name == email["attachment_name"]):
-		# 	return True
+			if(attachment_name == email["attachment_name"] and subject == email["email_subject"]):
+				return True
 	except Exception as e:
 		print("Bricked trying to find received email: [%s]" % e)
 		return False
@@ -143,6 +172,7 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
+# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
 email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')])
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
 success = receive_mail("dogwizard69@gmail.com", email, True)
