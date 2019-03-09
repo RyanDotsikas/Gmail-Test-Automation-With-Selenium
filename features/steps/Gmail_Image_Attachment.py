@@ -29,6 +29,7 @@ def step_impl(context):
 
 @when('I attach a .jpg format image that is less than 25 Mb in size')
 def step_impl(context):
+    context.file_name = "chicken.jpg"
     et.attach_file(context.driver, (os.getcwd() + '/images/chicken.jpg'))
 
 @when('I send the email')
@@ -38,14 +39,17 @@ def step_impl(context):
 
 @when('I attach a .png format image that is less than 25 Mb in size')
 def step_impl(context):
+    context.file_name = "bacon.png"
     et.attach_file(context.driver, (os.getcwd() + '/images/bacon.png'))
 
 @when('I attach a .jpg format image that exceeds 25 Mb in size')
 def step_impl(context):
+    context.file_name = "54mb.jpg"
     et.attach_file(context.driver, (os.getcwd() + '/images/54mb.jpg'))
 
 @when('I attach multiple .jpg format images (that total less than 25 Mb)')
 def step_impl(context):
+    context.file_name_array = ["chicken.jpg", "tomato.jpg"]
     paths_to_attachments = [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpg')]
     for path in paths_to_attachments:
         et.attach_file(context.driver, path)
@@ -59,8 +63,7 @@ def step_impl(context):
 # ------------ THEN ---------------
 @then('the recipient receives the email with the image attached')
 def step_impl(context):
-    email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : "chicken.jpg"}
-    # et.receive_mail(context.recipient, context.recipient_password, email, False)
+    email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : context.file_name}
     et.receive_mail(context.recipient, email, False)
 
 @then('the recipient receives the email with the image linked via Google Drive')
@@ -69,7 +72,8 @@ def step_impl(context):
 
 @then('the recipient receives the email with all images attached')
 def step_impl(context):
-    assert context.failed is False
+    email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_names" : context.file_name_array}
+    et.receive_mail(context.recipient, email, True)
 
 @then('I receive an automated email informing me that the recipient address does not exist')
 def step_impl(context):
