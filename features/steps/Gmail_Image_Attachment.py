@@ -25,9 +25,9 @@ def step_impl(context):
 def step_impl(context):
     context.subject = "Test Subject"
     et.fill_subject_field(context.driver, context.subject)
-    et.fill_body_field(context.driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
+    et.fill_body_field(context.driver, "Here is some sample generated text for the body: " + str(random.randint(1,1000)))
 
-@when('I attach an image that is less than 25 Mb in size')
+@when('I attach a .jpg format image that is less than 25 Mb in size')
 def step_impl(context):
     et.attach_file(context.driver, (os.getcwd() + '/images/chicken.jpg'))
 
@@ -36,13 +36,17 @@ def step_impl(context):
 	et.press_send(context.driver)
     et.check_sent_popup(context.driver)
 
-@when('I select an image that exceeds 25 Mb in size to attach')
+@when('I attach a .png format image that is less than 25 Mb in size')
 def step_impl(context):
-    et.attach_file(context.driver, (os.getcwd() + '/images/54mb.jpeg'))
+    et.attach_file(context.driver, (os.getcwd() + '/images/bacon.png'))
 
-@when('I attach multiple images (that total less than 25 Mb)')
+@when('I attach a .jpg format image that exceeds 25 Mb in size')
 def step_impl(context):
-    paths_to_attachments = [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpeg')]
+    et.attach_file(context.driver, (os.getcwd() + '/images/54mb.jpg'))
+
+@when('I attach multiple .jpg format images (that total less than 25 Mb)')
+def step_impl(context):
+    paths_to_attachments = [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpg')]
     for path in paths_to_attachments:
         et.attach_file(context.driver, path)
 
@@ -50,11 +54,6 @@ def step_impl(context):
 def step_impl(context):
     context.recipient = "sdfjsidnfo129sdf7@gmail.com"
     et.fill_to_field(context.driver, context.recipient)
-
-@when('I do not enter a subject line or a body to the email')
-def step_impl(context):
-    #Don't have to do anything here?
-    assert True is not False
 # ----------------------------------
 
 # ------------ THEN ---------------
@@ -73,10 +72,6 @@ def step_impl(context):
     assert context.failed is False
 
 @then('I receive an automated email informing me that the recipient address does not exist')
-def step_impl(context):
-    assert context.failed is False
-
-@then('I receive a warning that the email has no subject or body text')
 def step_impl(context):
     assert context.failed is False
 # --------------------------------
