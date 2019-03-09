@@ -34,11 +34,11 @@ def step_impl(context):
 @when('I send the email')
 def step_impl(context):
 	et.press_send(context.driver)
+    et.check_sent_popup(context.driver)
 
 @when('I select an image that exceeds 25 Mb in size to attach')
 def step_impl(context):
-    # Need to attach a file that is actually more than 25 Mb
-    et.attach_file(context.driver, (os.getcwd() + '/images/chicken.jpg'))
+    et.attach_file(context.driver, (os.getcwd() + '/images/54mb.jpeg'))
 
 @when('I attach multiple images (that total less than 25 Mb)')
 def step_impl(context):
