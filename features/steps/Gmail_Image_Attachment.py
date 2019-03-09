@@ -32,10 +32,11 @@ def step_impl(context):
     context.file_name = "chicken.jpg"
     et.attach_file(context.driver, (os.getcwd() + '/images/chicken.jpg'))
 
-@when('I send the email')
+@when('I sendthe email')
 def step_impl(context):
-	et.press_send(context.driver)
-    et.check_sent_popup(context.driver)
+    et.press_send(context.driver)
+    while(et.check_sent_popup(context.driver) == False):
+        continue
 
 @when('I attach a .png format image that is less than 25 Mb in size')
 def step_impl(context):
