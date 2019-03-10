@@ -98,6 +98,16 @@ def check_sent_popup(driver):
 		# print("Bricked getting popup text [%s]" % e)
 		return False
 
+def check_invalid_email():
+	driver = setup_webdriver()
+	load_inbox(driver, "dogwizard69", "ter12wvrrahah")
+
+	body = driver.find_element_by_css_selector(".y2").text
+	print(body)
+	if("Address not found" in body):
+		return True
+	else:
+		return False
 
 def send_mail(recipient_address, email_subject, path_to_attachment):
 	driver = setup_webdriver()
@@ -262,6 +272,7 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
+print(check_invalid_email())
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
 # email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
 
