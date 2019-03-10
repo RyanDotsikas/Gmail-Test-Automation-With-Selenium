@@ -162,6 +162,63 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 	driver.quit()
 	return email
 
+def check_sent_mail(receiver_address, email, multi_attach = False):
+	driver = setup_webdriver()
+	load_inbox(driver, "dogwizard69", "ter12wvrrahah") # currently using same email account to test
+
+	search_box = driver.find_element_by_css_selector(".gb_1e")
+	search_box.send_keys("in:sent\n")
+
+	to_text = driver.find_element_by_css_selector(".yW").text
+
+	subject_text = driver.find_element_by_css_selector(".y6").text
+
+	body_text = driver.find_element_by_css_selector(".y2").text
+	body_text = body_text[4:]
+
+	if(multi_attach):
+		while(True):
+			if(len(driver.find_elements_by_css_selector(".F.cf.zt")) == 1):
+				continue
+			else:
+				break
+		emails_table = driver.find_elements_by_css_selector(".F.cf.zt")[1]
+		top_email = emails_table.find_element_by_css_selector(".zA.zE.byw")
+		top_email.click()
+
+		attachment_names = driver.find_element_by_css_selector(".f.gW").get_attribute("title").split(',')
+		attachment_names = [str(f.strip()) for f in attachment_names]
+
+		email["attachment_names"].sort()
+		attachment_names.sort()
+		
+		if(email["attachment_names"] != attachment_names):
+			print("Attachment names not the same")
+			return False
+		if(email["delivery_address"] == email["recipient_address"]):
+			if(to_text != "me"):
+				return False
+		elif(email["recipient_address"] != to_text):
+			return False
+		if(email["email_subject"] != subject_text):
+			return False
+
+		return True
+	else:
+		attach_text = driver.find_element_by_css_selector(".brc").get_attribute("title")
+
+		if(email["delivery_address"] == email["recipient_address"]):
+			if(to_text != "me"):
+				return False
+		elif(email["recipient_address"] != to_text):
+			return False
+		if(email["email_subject"] != subject_text):
+			return False
+		if(email["attachment_name"] != attach_text):
+			return False
+
+		return True
+
 # email : dictionary containing delivery_address, recipient_address, email_subject, attachment_name
 # returns boolean of whether or not email is in the inbox
 def receive_mail(receiver_address, email, multi_attach = False):
@@ -186,9 +243,9 @@ def receive_mail(receiver_address, email, multi_attach = False):
 		attachment_names = []
 		if(multi_attach):
 			attachment_names = [f.get_attribute("title") for f in driver.find_elements_by_css_selector(".f.gW")]
-			sorted_known_attach_names = email["attachment_names"].sort()
-			sorted_found_attach_names = attachment_names.sort()
-			if(sorted_known_attach_names != sorted_found_attach_names):
+			email["attachment_names"].sort()
+			attachment_names.sort()
+			if(email["attachment_names"] != attachment_names):
 				print("Attachment names not the same")
 				return False
 			if(subject == email["email_subject"]):
@@ -205,9 +262,13 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
-# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
-# email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpg')])
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
+# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
+
+# email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpg')])
+
+# print(check_sent_mail("dogwizard69@gmail.com", email, True))
+
 # success = receive_mail("dogwizard69@gmail.com", email, True)
 
 # email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/54mb.jpg'))
