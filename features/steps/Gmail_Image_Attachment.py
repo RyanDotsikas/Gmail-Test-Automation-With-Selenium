@@ -2,6 +2,7 @@ from behave import *
 import email_testing as et
 import os
 import random
+import time
 
 # ------------ GIVEN ---------------
 @given('I am logged into a valid Gmail account')
@@ -23,7 +24,7 @@ def step_impl(context):
 
 @when('I enter a subject line or a body to the email')
 def step_impl(context):
-    context.subject = "Test Subject"
+    context.subject = "Test Subject" + str(random.randint(1,1000))
     et.fill_subject_field(context.driver, context.subject)
     et.fill_body_field(context.driver, "Here is some sample generated text for the body: " + str(random.randint(1,1000)))
 
@@ -73,7 +74,7 @@ def step_impl(context):
     email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : context.file_name}
     # assert (et.receive_mail(context.recipient, email, False))
     # assert (et.check_oversized_attachment(context.file_name))
-    assert (et.check_sent_mail(context.driver, context.recipient, email, False))
+    assert (et.check_sent_mail(context.driver, context.recipient, email, False, True))
 
 @then('the recipient receives the email with all images attached')
 def step_impl(context):
@@ -83,6 +84,6 @@ def step_impl(context):
 
 @then('I receive an automated email informing me that the recipient address does not exist')
 def step_impl(context):
-    assert (et.check_invalid_email())
+    assert (et.check_invalid_email(context.driver))
 # --------------------------------
 
