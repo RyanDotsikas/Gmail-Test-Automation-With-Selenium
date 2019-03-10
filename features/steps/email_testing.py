@@ -103,10 +103,19 @@ def check_invalid_email():
 	load_inbox(driver, "dogwizard69", "ter12wvrrahah")
 
 	body = driver.find_element_by_css_selector(".y2").text
-	if("Address not found" in body):
-		return True
-	else:
-		return False
+	while("Address not found" not in body):
+		refresh_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.nu.T-I-ax7.L3")
+		refresh_button.click()
+		try:
+			body = driver.find_element_by_css_selector(".y2").text
+		except Exception as e:
+			pass
+		
+	return True
+	# if("Address not found" in body):
+	# 	return True
+	# else:
+	# 	return False
 
 def check_oversized_attachment(attachment_name):
 	driver = setup_webdriver()
@@ -283,6 +292,10 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
+# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
+# email = send_mail("asdsdkbndflkdflkn@gmail.com", "Test test", (os.getcwd() + '/images/chicken.jpg'))
+
+# check_invalid_email()
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
 # email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
 
