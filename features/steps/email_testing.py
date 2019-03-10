@@ -103,8 +103,17 @@ def check_invalid_email():
 	load_inbox(driver, "dogwizard69", "ter12wvrrahah")
 
 	body = driver.find_element_by_css_selector(".y2").text
-	print(body)
 	if("Address not found" in body):
+		return True
+	else:
+		return False
+
+def check_oversized_attachment(attachment_name):
+	driver = setup_webdriver()
+	load_inbox(driver, "dogwizard69", "ter12wvrrahah")
+
+	body = driver.find_element_by_css_selector(".y2").text
+	if(attachment_name == body[3:].split()[0]):
 		return True
 	else:
 		return False
@@ -149,7 +158,6 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 	fill_subject_field(driver, email_subject)
 
 	fill_body_field(driver, "Yarr harr I am an email spam bot ayy lmao " + str(random.randint(1,1000)))
-	# time.sleep(3) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	email = {}
 	email["delivery_address"] = "dogwizard69@gmail.com"
@@ -159,11 +167,9 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 
 	for path in paths_to_attachments:
 		attach_file(driver, path)
-		# time.sleep(1) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 		email["attachment_names"].append(path.split("/")[len(path.split("/")) - 1])
 
 	press_send(driver)
-	# time.sleep(2) # NEED TO FIGURE OUT PROPER WAIT FOR LOAD
 
 	while(True):
 		if(check_sent_popup(driver)):
@@ -236,25 +242,30 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	load_inbox(driver, "dogwizard69", "ter12wvrrahah") # currently using same email account to test
 
 	try:
-		sender = driver.find_element_by_css_selector(".zF").get_attribute("email")
-		body = driver.find_element_by_css_selector(".y2").text
+		while(True):
+			sender = driver.find_element_by_css_selector(".zF").get_attribute("email")
+			if sender:
+				break
 
+		body = driver.find_element_by_css_selector(".y2").text
 		subjects = driver.find_elements_by_css_selector(".bqe")
 		subject = subjects[1].text
 
 		email_button = driver.find_element_by_css_selector(".zA.zE.byw")
 		email_button.click()
-		# time.sleep(1) # NEED TO FIO WAIT FOR LOAD
 
-		# TODO : CLEAN UP EMAIL CHECKING TIMING!
-		body = driver.find_element_by_css_selector(".a3s.aXjCH").text
+		# possible inconsistency with timing here
+		# body = driver.find_element_by_css_selector(".a3s.aXjCH").text
 
 		attachment_name = ""
 		attachment_names = []
 		if(multi_attach):
-			attachment_names = [f.get_attribute("title") for f in driver.find_elements_by_css_selector(".f.gW")]
+			attachment_names = driver.find_element_by_css_selector(".f.gW").get_attribute("title").split(',')
+			attachment_names = [f.strip() for f in attachment_names]
+
 			email["attachment_names"].sort()
 			attachment_names.sort()
+			
 			if(email["attachment_names"] != attachment_names):
 				print("Attachment names not the same")
 				return False
@@ -272,10 +283,10 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
-print(check_invalid_email())
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
 # email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
 
+# email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_names" : ["chicken.jpg", "tomato.jpg"]}
 # email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpg')])
 
 # print(check_sent_mail("dogwizard69@gmail.com", email, True))

@@ -69,7 +69,9 @@ def step_impl(context):
 
 @then('the recipient receives the email with the image linked via Google Drive')
 def step_impl(context):
-    assert context.failed is False
+    email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : context.file_name}
+    # assert (et.receive_mail(context.recipient, email, False))
+    assert (et.check_oversized_attachment(context.file_name))
 
 @then('the recipient receives the email with all images attached')
 def step_impl(context):
@@ -78,6 +80,6 @@ def step_impl(context):
 
 @then('I receive an automated email informing me that the recipient address does not exist')
 def step_impl(context):
-    assert context.failed is False
+    assert (et.check_invalid_email())
 # --------------------------------
 
