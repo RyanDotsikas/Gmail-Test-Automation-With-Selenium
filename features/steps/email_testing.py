@@ -9,15 +9,13 @@ import random
 
 def setup_webdriver():
 	driver = webdriver.Chrome(ChromeDriverManager().install())
-	driver.implicitly_wait(10)
+	driver.implicitly_wait(15)
 
 	return driver
 
 #"dogwizard69"
 #"ter12wvrrahah"
 def load_inbox(driver, username, password):
-	#driver = webdriver.Chrome(ChromeDriverManager().install())
-	#driver.implicitly_wait(10)
 	driver.get('https://gmail.com')
 	
 	email_element = driver.find_element_by_css_selector(".whsOnd.zHQkBf[autocomplete='username']")
@@ -78,9 +76,15 @@ def attach_file(driver, path):
 
 def press_send(driver):
 	try:
-		send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
-		send_button.click()
+		while(True): # repeatedly try to press the send button in case of oversized file upload
+			try:
+				send_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aoO.T-I-atl.L3")
+				send_button.click()
+				break		
+			except Exception as e:
+				continue
 	except Exception as e:
+		print("Error: %s" % e)
 		return False
 
 def check_sent_popup(driver):
@@ -205,6 +209,8 @@ def receive_mail(receiver_address, email, multi_attach = False):
 # email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpg')])
 # email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
 # success = receive_mail("dogwizard69@gmail.com", email, True)
+
+# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/54mb.jpg'))
 
 # print("Received Email Check: %s\a" % success)
 

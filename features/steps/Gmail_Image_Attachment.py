@@ -32,7 +32,7 @@ def step_impl(context):
     context.file_name = "chicken.jpg"
     et.attach_file(context.driver, (os.getcwd() + '/images/chicken.jpg'))
 
-@when('I sendthe email')
+@when('I send the email')
 def step_impl(context):
     et.press_send(context.driver)
     while(et.check_sent_popup(context.driver) == False):
@@ -65,7 +65,7 @@ def step_impl(context):
 @then('the recipient receives the email with the image attached')
 def step_impl(context):
     email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : context.file_name}
-    et.receive_mail(context.recipient, email, False)
+    assert (et.receive_mail(context.recipient, email, False))
 
 @then('the recipient receives the email with the image linked via Google Drive')
 def step_impl(context):
@@ -74,7 +74,7 @@ def step_impl(context):
 @then('the recipient receives the email with all images attached')
 def step_impl(context):
     email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_names" : context.file_name_array}
-    et.receive_mail(context.recipient, email, True)
+    assert (et.receive_mail(context.recipient, email, True))
 
 @then('I receive an automated email informing me that the recipient address does not exist')
 def step_impl(context):
