@@ -187,9 +187,9 @@ def send_mail_multi_attach(recipient_address, email_subject, paths_to_attachment
 	driver.quit()
 	return email
 
-def check_sent_mail(receiver_address, email, multi_attach = False):
-	driver = setup_webdriver()
-	load_inbox(driver, "dogwizard69", "ter12wvrrahah") # currently using same email account to test
+def check_sent_mail(driver, receiver_address, email, multi_attach = False):
+	# driver = setup_webdriver()
+	# load_inbox(driver, "dogwizard69", "ter12wvrrahah") # currently using same email account to test
 
 	search_box = driver.find_element_by_css_selector(".gb_1e")
 	search_box.send_keys("in:sent\n")
@@ -216,7 +216,9 @@ def check_sent_mail(receiver_address, email, multi_attach = False):
 
 		email["attachment_names"].sort()
 		attachment_names.sort()
-		
+		print("email attachment names: %s" % email["attachment_names"])
+		print("found attachment names: %s" % attachment_names)
+
 		if(email["attachment_names"] != attachment_names):
 			print("Attachment names not the same")
 			return False
@@ -230,8 +232,16 @@ def check_sent_mail(receiver_address, email, multi_attach = False):
 
 		return True
 	else:
+		print("ah ah")
 		attach_text = driver.find_element_by_css_selector(".brc").get_attribute("title")
-
+		print("to_text [%s]" % to_text)
+		print("subject text [%s]" % subject_text)
+		print("body text [%s]" % body_text)
+		print("attach text [%s]" % attach_text)
+		if(email["attachment_name"] in body_text): # oversized check
+			return True
+		else:
+			print(body_text)
 		if(email["delivery_address"] == email["recipient_address"]):
 			if(to_text != "me"):
 				return False
