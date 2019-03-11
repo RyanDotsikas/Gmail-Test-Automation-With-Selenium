@@ -64,20 +64,20 @@ def step_impl(context):
 # ----------------------------------
 
 # ------------ THEN ---------------
-@then('the recipient receives the email with the image attached')
+@then('the email appears in my sent box with the image attached')
 def step_impl(context):
     email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : context.file_name}
     # assert (et.receive_mail(context.recipient, email, False))
     assert (et.check_sent_mail(context.driver, context.recipient, email, False))
 
-@then('the recipient receives the email with the image linked via Google Drive')
+@then('the email appears in my sent box with the image attached via Google Drive')
 def step_impl(context):
     email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_name" : context.file_name}
     # assert (et.receive_mail(context.recipient, email, False))
     # assert (et.check_oversized_attachment(context.file_name))
     assert (et.check_sent_mail(context.driver, context.recipient, email, False, True))
 
-@then('the recipient receives the email with all images attached')
+@then('the email appears in my sent box with all images attached')
 def step_impl(context):
     email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : context.recipient, "email_subject" : context.subject, "attachment_names" : context.file_name_array}
     # assert (et.receive_mail(context.recipient, email, True))
