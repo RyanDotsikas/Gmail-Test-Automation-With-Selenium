@@ -194,6 +194,9 @@ def check_sent_mail(driver, receiver_address, email, multi_attach = False, overs
 	search_box = driver.find_element_by_css_selector(".gb_1e")
 	search_box.send_keys("in:sent\n")
 	
+	# wait = WebDriverWait(driver, 10)
+	# refresh_button = wait.until(ec.element_to_be_clickable((By.XPATH, "//div[contains(@class, 'T-I') and contains(@class, 'J-J5-Ji') and contains(@class, 'nu') and contains(@class, 'T-I-ax7') and contains(@class, 'L3')]")))
+
 	refresh_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.nu.T-I-ax7.L3")
 	refresh_button.click()
 	
@@ -203,19 +206,24 @@ def check_sent_mail(driver, receiver_address, email, multi_attach = False, overs
 			top_email = emails_table.find_element_by_css_selector(".zA.zE")
 			top_email.click()
 
-			found_attach_name = top_email.find_element_by_css_selector(".aQA").text
+			# found_attach_name = driver.find_element_by_css_selector(".T-I.J-J5-Ji.aQv.T-I-ax7.L3").get_attribute("aria-label").split()
+			# found_attach_name = found_attach_name[len(found_attach_name) - 1]
+			found_attach_name = driver.find_element_by_xpath("//a/span[@dir='ltr']").text
+			print("eat my ass %s" % found_attach_name)
 			if(not multi_attach):
 				if(found_attach_name != email["attachment_name"]):
-					back_button = driver.find_element_by_css_selector(".asa")
+					back_button = driver.find_element_by_css_selector(".T-I.J-J5-Ji.lS.T-I-ax7.mA.T-I-Zf-aw2")
 					back_button.click()
 				else:
-					back_button = driver.find_element_by_css_selector(".asa")
-					back_button.click()
+					return True
 					break
 
 
 	# to_text = driver.find_element_by_css_selector(".yW").text
-	to_text = driver.find_element_by_xpath("//div[contains(@class, 'BltHke') and contains(@class, 'nH') and contains(@class, 'oy8Mbf')]/div/div/div/table/tbody/tr/td[contains(@class, 'yX') and contains(@class, 'xY')]/div[@class='yW']").text.split()[1]
+	to_text = driver.find_element_by_xpath("//div[contains(@class, 'BltHke') and contains(@class, 'nH') and contains(@class, 'oy8Mbf')]/div/div/div/table/tbody/tr/td[contains(@class, 'yX') and contains(@class, 'xY')]/div[@class='yW']").text
+	if(len(to_text.split()) == 2):
+		to_text = to_text.split()[1]
+	
 
 	# subject_text = driver.find_element_by_css_selector(".y6").text
 	subject_text = driver.find_element_by_xpath("//div[contains(@class, 'BltHke') and contains(@class, 'nH') and contains(@class, 'oy8Mbf')]/div/div/div/table/tbody/tr/td[contains(@class, 'xY') and contains(@class, 'a4W')]/div[@class='xS']/div[@class='xT']/div[@class='y6']").text
@@ -329,24 +337,4 @@ def receive_mail(receiver_address, email, multi_attach = False):
 	driver.quit()
 	return False
 
-# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
-# email = send_mail("asdsdkbndflkdflkn@gmail.com", "Test test", (os.getcwd() + '/images/chicken.jpg'))
-
-# check_invalid_email()
-# email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_name" : "chicken.jpg"}
-# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/chicken.jpg'))
-
-# email = {"delivery_address" : "dogwizard69@gmail.com", "recipient_address" : "dogwizard69@gmail.com", "email_subject" : "Second Test", "attachment_names" : ["chicken.jpg", "tomato.jpg"]}
-# email = send_mail_multi_attach("dogwizard69@gmail.com", "Second Test", [(os.getcwd() + '/images/chicken.jpg'), (os.getcwd() + '/images/tomato.jpg')])
-
-# driver = setup_webdriver()
-# load_inbox(driver, "dogwizard69", "ter12wvrrahah")
-# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/54mb.jpg'))
-# print(check_sent_mail(driver, "dogwizard69@gmail.com", email, False))
-
-# success = receive_mail("dogwizard69@gmail.com", email, True)
-
-# email = send_mail("dogwizard69@gmail.com", "Second Test", (os.getcwd() + '/images/54mb.jpg'))
-
-# print("Received Email Check: %s\a" % success)
 
