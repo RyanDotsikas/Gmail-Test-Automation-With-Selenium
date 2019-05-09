@@ -1,6 +1,6 @@
-# ECSE428_A2
+# Gmail Test Automation using Selenium Webdriver
 
-This project was created for Assignment 2 of ECSE428, with the goal of automating the testing of Gmail by sending emails with image files attached. The project tests 5 different scenarios that vary the type of recipient and image file. It is written in Python, utilizing Selenium Web Driver and Cucumber's Python version: Behave to conduct all tests.
+This project was created for the McGill class ECSE 428: Software Engineering Practice, with the goal of automating the testing of Gmail by sending emails with image files attached. The project tests 5 different scenarios that vary the type of recipient and image file. It is written in Python, utilizing Selenium Web Driver and Cucumber's Python version: Behave to conduct all tests. All test scenarios were decided upon by ourselves and written using the Gherkin style/language.
 
 Installation Instructions:
 1. Download and Install Python 3
@@ -19,7 +19,7 @@ Installation Instructions:
 
 Operation Instructions:
 1. Open the command line
-2. Navigate to the project folder: ECSE428_A2
+2. Navigate to the project folder
 3. Enter the following in the command line to run the tests: ‘behave’
 4. When the Gmail web page is loaded, log in to a Gmail account of your choice
   a. This is to avoid Gmail’s security measures, such as Captcha or Two-Step Authentication, that are designed to stop bots such as this
